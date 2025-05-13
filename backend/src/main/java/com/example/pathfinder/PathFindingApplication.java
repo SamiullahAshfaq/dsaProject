@@ -4,9 +4,9 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class PathfindingApplication {
+public class PathFindingApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(PathfindingApplication.class, args);
+        SpringApplication.run(PathFindingApplication.class, args);
     }
 }

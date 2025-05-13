@@ -6,10 +6,14 @@ import com.example.pathfinder.service.MazeService;
 import com.example.pathfinder.service.PathfindingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @RestController
 @RequestMapping("/api")
 public class PathFinderController {
+
+    private static final Logger logger = LoggerFactory.getLogger(PathFinderController.class);
 
     @Autowired
     private PathfindingService pathfindingService;
@@ -26,21 +30,34 @@ public class PathFinderController {
                                 @RequestParam int startY,
                                 @RequestParam int endX,
                                 @RequestParam int endY) {
+        logger.info("Pathfinding request received: algorithm={}, rows={}, cols={}, start=({}, {}), end=({}, {})",
+                algorithm, rows, cols, startX, startY, endX, endY);
+        validateGridParameters(rows, cols, startX, startY, endX, endY);
         Tile[][] grid = createGrid(rows, cols);
         Tile start = grid[startY][startX];
         Tile end = grid[endY][endX];
 
-        switch (algorithm.toUpperCase()) {
-            case "DIJKSTRA":
+        Algorithm algo;
+        try {
+            algo = Algorithm.valueOf(algorithm.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Invalid algorithm: " + algorithm);
+        }
+
+        switch (algo) {
+            case DIJKSTRA -> {
                 return pathfindingService.runDijkstra(grid, start, end);
-            case "A_STAR":
+            }
+            case A_STAR -> {
                 return pathfindingService.runAStar(grid, start, end);
-            case "BFS":
+            }
+            case BFS -> {
                 return pathfindingService.runBFS(grid, start, end);
-            case "DFS":
+            }
+            case DFS -> {
                 return pathfindingService.runDFS(grid, start, end);
-            default:
-                throw new IllegalArgumentException("Invalid algorithm: " + algorithm);
+            }
+            default -> throw new IllegalArgumentException("Unsupported algorithm: " + algorithm);
         }
     }
 
@@ -68,5 +85,17 @@ public class PathFinderController {
             }
         }
         return grid;
+    }
+
+    private void validateGridParameters(int rows, int cols, int startX, int startY, int endX, int endY) {
+        if (rows <= 0 || cols <= 0) {
+            throw new IllegalArgumentException("Rows and columns must be greater than 0.");
+        }
+        if (startX < 0 || startX >= cols || startY < 0 || startY >= rows) {
+            throw new IllegalArgumentException("Start coordinates are out of bounds.");
+        }
+        if (endX < 0 || endX >= cols || endY < 0 || endY >= rows) {
+            throw new IllegalArgumentException("End coordinates are out of bounds.");
+        }
     }
 }
