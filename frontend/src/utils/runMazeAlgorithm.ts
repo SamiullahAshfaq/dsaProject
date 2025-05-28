@@ -18,11 +18,15 @@ export const runMazeAlgorithm = async ({
   try {
     setIsDisabled(true);
 
-    const response = await fetch(`http://localhost:8080/api/maze/${maze}`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ grid, start: startTile, end: endTile, speed }),
-    });
+    const response = await fetch(
+  `http://localhost:8080/api/maze/${maze}?rows=${grid.length}&cols=${grid[0].length}`,
+  {
+    method: "POST",
+    headers: { "Content-Type": "application/json" }
+  }
+);
+
+
 
     if (!response.ok) {
       console.error("Failed to generate maze:", response.statusText);

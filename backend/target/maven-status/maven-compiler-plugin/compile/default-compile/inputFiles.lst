@@ -1,7 +1,4 @@
-/home/samiullah/Coding/dsaProject/backend/src/main/java/com/example/pathfinder/model/GridResponse.java
 /home/samiullah/Coding/dsaProject/backend/src/main/java/com/example/pathfinder/model/PathfindingRequest.java
-/home/samiullah/Coding/dsaProject/backend/src/main/java/com/example/pathfinder/model/Position.java
-/home/samiullah/Coding/dsaProject/backend/src/main/java/com/example/pathfinder/service/PathfindingService.java
 /home/samiullah/Coding/dsaProject/backend/src/main/java/com/example/pathfinder/model/GridRequest.java
 /home/samiullah/Coding/dsaProject/backend/src/main/java/com/example/pathfinder/service/MazeService.java
 /home/samiullah/Coding/dsaProject/backend/src/main/java/com/example/pathfinder/PathFindingApplication.java
@@ -9,4 +6,9 @@
 /home/samiullah/Coding/dsaProject/backend/src/main/java/com/example/pathfinder/model/MazeRequest.java
 /home/samiullah/Coding/dsaProject/backend/src/main/java/com/example/pathfinder/exception/GlobalExceptionHandler.java
 /home/samiullah/Coding/dsaProject/backend/src/main/java/com/example/pathfinder/controller/PathFinderController.java
+/home/samiullah/Coding/dsaProject/backend/src/main/java/com/example/pathfinder/model/GridResponse.java
+/home/samiullah/Coding/dsaProject/backend/src/main/java/com/example/pathfinder/model/Position.java
+/home/samiullah/Coding/dsaProject/backend/src/main/java/com/example/pathfinder/service/PathfindingService.java
+/home/samiullah/Coding/dsaProject/backend/src/main/java/com/example/pathfinder/controller/MazeType.java
+/home/samiullah/Coding/dsaProject/backend/src/main/java/com/example/pathfinder/CorsConfig.java
 /home/samiullah/Coding/dsaProject/backend/src/main/java/com/example/pathfinder/controller/Algorithm.java

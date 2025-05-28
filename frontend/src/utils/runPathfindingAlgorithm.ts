@@ -11,11 +11,9 @@ export const runPathfindingAlgorithm = async ({
   startTile: TileType;
   endTile: TileType;
 }) => {
-  const response = await fetch(`http://localhost:8080/api/pathfinding/${algorithm}`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ grid, start: startTile, end: endTile }),
-  });
+  const response = await fetch(`http://localhost:8080/api/pathfinding?algorithm=${algorithm}&rows=${grid.length}&cols=${grid[0].length}&startX=${startTile.col}&startY=${startTile.row}&endX=${endTile.col}&endY=${endTile.row}`, {
+  method: "POST",
+});
 
   const data = await response.json();
   return data; // should contain { traversedTiles, path }
