@@ -1,6 +1,13 @@
 package com.example.pathfinder.model;
 
 public class Position {
+
+    
+    public Position(int row, int col) {
+        this.row = row;
+        this.col = col;
+    }
+
     private int row;
     private int col;
 

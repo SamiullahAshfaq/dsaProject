@@ -1,24 +1,17 @@
 package com.example.pathfinder.controller;
 
 import com.example.pathfinder.model.GridResponse;
+import com.example.pathfinder.model.Position;
 import com.example.pathfinder.model.Tile;
 import com.example.pathfinder.service.MazeService;
+import com.example.pathfinder.service.MazeService.MazeGenerationResult;
 import com.example.pathfinder.service.PathfindingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-// Simple Position class definition (add this if not already present elsewhere)
-class Position {
-    public int row;
-    public int col;
 
-    public Position(int row, int col) {
-        this.row = row;
-        this.col = col;
-    }
-}
 
 @RestController
 @RequestMapping("/api")
@@ -66,32 +59,29 @@ public class PathFinderController {
     }
 
     // Maze Generation Unified Endpoint
-    @PostMapping("/maze/{type}")
-    public Tile[][] generateMaze(@PathVariable String type,
-                                 @RequestParam int rows,
-                                 @RequestParam int cols) {
+    @PostMapping("/maze/{mazeType}")
+    public MazeGenerationResult generateMaze(
+        @PathVariable String mazeType,
+        @RequestParam int rows,
+        @RequestParam int cols,
+        @RequestParam int startRow,
+        @RequestParam int startCol,
+        @RequestParam int endRow,
+        @RequestParam int endCol
+    ) {
+        logger.info("Maze generation request: type={}, rows={}, cols={}, start=({}, {}), end=({}, {})",
+                mazeType, rows, cols, startRow, startCol, endRow, endCol);
 
-        logger.info("Maze generation request: type={}, rows={}, cols={}", type, rows, cols);
-
-        Tile[][] grid = createGrid(rows, cols);
-        MazeType mazeType;
-
-        // Define start and end positions for the maze (e.g., top-left and bottom-right corners)
-        Position start = new Position(0, 0);
-        Position end = new Position(rows - 1, cols - 1);
-
-        try {
-            mazeType = MazeType.valueOf(type.toUpperCase());
-        } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException("Invalid maze type: " + type);
+        Position start = new Position(startRow, startCol);
+        Position end = new Position(endRow, endCol);
+        
+        if ("BINARY_TREE".equals(mazeType)) {
+            return mazeService.generateBinaryTreeMaze(rows, cols, start, end);
+        } else if ("RECURSIVE_DIVISION".equals(mazeType)) {
+            return mazeService.generateRecursiveDivisionMaze(rows, cols, start, end);
+        } else {
+            throw new IllegalArgumentException("Invalid maze type: " + mazeType);
         }
-
-        switch (mazeType) {
-            case RECURSIVE_DIVISION -> mazeService.generateRecursiveDivisionMaze(grid, start, end);
-            case BINARY_TREE -> mazeService.generateBinaryTreeMaze(grid);
-        }
-
-        return grid;
     }
 
     // Helper: Grid Creation
