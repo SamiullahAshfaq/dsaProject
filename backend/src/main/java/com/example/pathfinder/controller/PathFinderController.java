@@ -9,6 +9,17 @@ import org.springframework.web.bind.annotation.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+// Simple Position class definition (add this if not already present elsewhere)
+class Position {
+    public int row;
+    public int col;
+
+    public Position(int row, int col) {
+        this.row = row;
+        this.col = col;
+    }
+}
+
 @RestController
 @RequestMapping("/api")
 public class PathFinderController {
@@ -65,6 +76,10 @@ public class PathFinderController {
         Tile[][] grid = createGrid(rows, cols);
         MazeType mazeType;
 
+        // Define start and end positions for the maze (e.g., top-left and bottom-right corners)
+        Position start = new Position(0, 0);
+        Position end = new Position(rows - 1, cols - 1);
+
         try {
             mazeType = MazeType.valueOf(type.toUpperCase());
         } catch (IllegalArgumentException e) {
@@ -72,7 +87,7 @@ public class PathFinderController {
         }
 
         switch (mazeType) {
-            case RECURSIVE_DIVISION -> mazeService.generateRecursiveDivisionMaze(grid);
+            case RECURSIVE_DIVISION -> mazeService.generateRecursiveDivisionMaze(grid, start, end);
             case BINARY_TREE -> mazeService.generateBinaryTreeMaze(grid);
         }
 
