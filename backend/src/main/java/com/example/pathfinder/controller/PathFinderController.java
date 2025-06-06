@@ -92,12 +92,14 @@ public class PathFinderController {
             
             MazeGenerationResult result;
             
-            if ("BINARY_TREE".equals(mazeType)) {
-                result = mazeService.generateBinaryTreeMaze(rows, cols, start, end);
-            } else if ("RECURSIVE_DIVISION".equals(mazeType)) {
-                result = mazeService.generateRecursiveDivisionMaze(rows, cols, start, end);
-            } else {
+            if (null == mazeType) {
                 return ResponseEntity.badRequest().body("Invalid maze type: " + mazeType);
+            } else switch (mazeType) {
+                case "BINARY_TREE" -> result = mazeService.generateBinaryTreeMaze(rows, cols, start, end);
+                case "RECURSIVE_DIVISION" -> result = mazeService.generateRecursiveDivisionMaze(rows, cols, start, end);
+                default -> {
+                    return ResponseEntity.badRequest().body("Invalid maze type: " + mazeType);
+                }
             }
             
             logger.info("Maze generation completed successfully. Steps: {}", 

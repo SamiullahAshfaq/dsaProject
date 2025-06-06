@@ -76,115 +76,125 @@ public class MazeService {
         grid[end.getRow()][end.getCol()].setWall(false);
         
         // Generate maze with recorded steps
-        divideWithSteps(grid, 1, 1, cols - 2, rows - 2, start, end, steps);
+        divide(grid, 1, 1, cols - 2, rows - 2, start, end, steps);
         
         return new MazeGenerationResult(grid, steps);
     }
 
-    private void divideWithSteps(Tile[][] grid, int x, int y, int width, int height, 
-                                Position start, Position end, List<MazeStep> steps) {
-        if (width < 2 || height < 2) {
-            return;
+    private void divide(Tile[][] grid, int row, int col, int height, int width,
+                    Position start, Position end, List<MazeStep> steps) {
+    if (height <= 1 || width <= 1) return;
+
+    if (height > width) {
+        // Horizontal division
+        int makeWallAt = row + random.nextInt(height / 2) * 2 + 1;
+        int makePassageAt = col + random.nextInt((width + 1) / 2) * 2;
+
+        for (int i = 0; i < 2 * width - 1; i++) {
+            int currentCol = col + i;
+            if (makePassageAt == currentCol ||
+                (makeWallAt == start.getRow() && currentCol == start.getCol()) ||
+                (makeWallAt == end.getRow() && currentCol == end.getCol())) {
+                continue;
+            }
+
+            if (isInBounds(grid, makeWallAt, currentCol)) {
+                grid[makeWallAt][currentCol].setWall(true);
+                steps.add(new MazeStep(makeWallAt, currentCol, true, "wall"));
+            }
         }
 
-        boolean horizontal = chooseOrientation(width, height);
-        
-        if (horizontal) {
-            // Horizontal division
-            int wallY = y + (random.nextInt((height - 1) / 2) * 2) + 1;
-            int passageX = x + random.nextInt(width);
-            
-            // Create horizontal wall and record steps
-            for (int i = x; i < x + width; i++) {
-                if (i == passageX || 
-                    (i == start.getCol() && wallY == start.getRow()) || 
-                    (i == end.getCol() && wallY == end.getRow())) {
-                    continue;
-                }
-                
-                if (wallY < grid.length && i < grid[0].length) {
-                    grid[wallY][i].setWall(true);
-                    steps.add(new MazeStep(wallY, i, true, "wall"));
-                }
+        // Recursively divide above and below
+        divide(grid, row, col, (makeWallAt - row + 1) / 2, width, start, end, steps);
+        divide(grid, makeWallAt + 1, col, height - (makeWallAt - row + 1) / 2, width, start, end, steps);
+
+    } else {
+        // Vertical division
+        int makeWallAt = col + random.nextInt(width / 2) * 2 + 1;
+        int makePassageAt = row + random.nextInt((height + 1) / 2) * 2;
+
+        for (int i = 0; i < 2 * height - 1; i++) {
+            int currentRow = row + i;
+            if (makePassageAt == currentRow ||
+                (currentRow == start.getRow() && makeWallAt == start.getCol()) ||
+                (currentRow == end.getRow() && makeWallAt == end.getCol())) {
+                continue;
             }
-            
-            // Recursive calls
-            divideWithSteps(grid, x, y, width, wallY - y, start, end, steps);
-            divideWithSteps(grid, x, wallY + 1, width, height - (wallY - y + 1), start, end, steps);
-            
-        } else {
-            // Vertical division
-            int wallX = x + (random.nextInt((width - 1) / 2) * 2) + 1;
-            int passageY = y + random.nextInt(height);
-            
-            // Create vertical wall and record steps
-            for (int i = y; i < y + height; i++) {
-                if (i == passageY || 
-                    (wallX == start.getCol() && i == start.getRow()) || 
-                    (wallX == end.getCol() && i == end.getRow())) {
-                    continue;
-                }
-                
-                if (i < grid.length && wallX < grid[0].length) {
-                    grid[i][wallX].setWall(true);
-                    steps.add(new MazeStep(i, wallX, true, "wall"));
-                }
+
+            if (isInBounds(grid, currentRow, makeWallAt)) {
+                grid[currentRow][makeWallAt].setWall(true);
+                steps.add(new MazeStep(currentRow, makeWallAt, true, "wall"));
             }
-            
-            // Recursive calls
-            divideWithSteps(grid, x, y, wallX - x, height, start, end, steps);
-            divideWithSteps(grid, wallX + 1, y, width - (wallX - x + 1), height, start, end, steps);
         }
+
+        // Recursively divide left and right
+        divide(grid, row, col, height, (makeWallAt - col + 1) / 2, start, end, steps);
+        divide(grid, row, makeWallAt + 1, height, width - (makeWallAt - col + 1) / 2, start, end, steps);
     }
+}
+
+    private boolean isInBounds(Tile[][] grid, int r, int c) {
+        return r >= 0 && r < grid.length && c >= 0 && c < grid[0].length;
+    }
+
 
     public MazeGenerationResult generateBinaryTreeMaze(int rows, int cols, Position start, Position end) {
-        Tile[][] grid = new Tile[rows][cols];
-        List<MazeStep> steps = new ArrayList<>();
-        
-        // Initialize all tiles as walls
-        for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < cols; j++) {
-                grid[i][j] = new Tile();
-                grid[i][j].setWall(true);
-                steps.add(new MazeStep(i, j, true, "wall"));
-            }
+    Tile[][] grid = new Tile[rows][cols];
+    List<MazeStep> steps = new ArrayList<>();
+
+    // Step 1: Set all even-indexed cells as walls (outer boundary too)
+    for (int i = 0; i < rows; i++) {
+        for (int j = 0; j < cols; j++) {
+            grid[i][j] = new Tile();
+            boolean isEven = i % 2 == 0 || j % 2 == 0;
+            grid[i][j].setWall(isEven);
+            steps.add(new MazeStep(i, j, isEven, isEven ? "wall" : "passage"));
         }
-        
-        // Carve passages and record steps
-        for (int y = 1; y < rows; y += 2) {
-            for (int x = 1; x < cols; x += 2) {
-                // Make current cell a passage
-                grid[y][x].setWall(false);
-                steps.add(new MazeStep(y, x, false, "passage"));
-                
-                // Decide which direction to carve
-                boolean canGoNorth = (y > 1);
-                boolean canGoWest = (x > 1);
-                
-                if (canGoNorth && canGoWest) {
-                    if (random.nextBoolean()) {
-                        grid[y - 1][x].setWall(false);
-                        steps.add(new MazeStep(y - 1, x, false, "passage"));
-                    } else {
-                        grid[y][x - 1].setWall(false);
-                        steps.add(new MazeStep(y, x - 1, false, "passage"));
+    }
+
+    // Step 2: For each odd cell, remove wall to the right or down
+    for (int r = 1; r < rows; r += 2) {
+        for (int c = 1; c < cols; c += 2) {
+            if (r == rows - 2 && c == cols - 2) continue; // bottom-right skip
+
+            if (r == rows - 2) {
+                // last row — destroy right
+                if (c + 1 < cols) {
+                    grid[r][c + 1].setWall(false);
+                    steps.add(new MazeStep(r, c + 1, false, "passage"));
+                }
+            } else if (c == cols - 2) {
+                // last col — destroy down
+                if (r + 1 < rows) {
+                    grid[r + 1][c].setWall(false);
+                    steps.add(new MazeStep(r + 1, c, false, "passage"));
+                }
+            } else {
+                // randomly right or down
+                if (random.nextBoolean()) {
+                    if (c + 1 < cols) {
+                        grid[r][c + 1].setWall(false);
+                        steps.add(new MazeStep(r, c + 1, false, "passage"));
                     }
-                } else if (canGoNorth) {
-                    grid[y - 1][x].setWall(false);
-                    steps.add(new MazeStep(y - 1, x, false, "passage"));
-                } else if (canGoWest) {
-                    grid[y][x - 1].setWall(false);
-                    steps.add(new MazeStep(y, x - 1, false, "passage"));
+                } else {
+                    if (r + 1 < rows) {
+                        grid[r + 1][c].setWall(false);
+                        steps.add(new MazeStep(r + 1, c, false, "passage"));
+                    }
                 }
             }
         }
-        
-        // Ensure start and end are passages
-        grid[start.getRow()][start.getCol()].setWall(false);
-        grid[end.getRow()][end.getCol()].setWall(false);
-        
-        return new MazeGenerationResult(grid, steps);
     }
+
+    // Ensure start and end are passages
+    grid[start.getRow()][start.getCol()].setWall(false);
+    grid[end.getRow()][end.getCol()].setWall(false);
+    steps.add(new MazeStep(start.getRow(), start.getCol(), false, "passage"));
+    steps.add(new MazeStep(end.getRow(), end.getCol(), false, "passage"));
+
+    return new MazeGenerationResult(grid, steps);
+}
+
     
     private boolean chooseOrientation(int width, int height) {
         if (width < height) {

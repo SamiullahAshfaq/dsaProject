@@ -253,8 +253,12 @@ export const runMazeAlgorithm = async ({
     // Preserve start and end tile properties in the final maze
     preserveStartEndTiles(result.finalMaze, startTile, endTile);
     
+    // Delay animation slightly to let DOM render
+    await new Promise(resolve => requestAnimationFrame(resolve));
+
     // Animate the maze generation using backend-generated steps
     await animateMazeGeneration(grid, result, startTile, endTile, speed, maze);
+
     
     // Apply final maze state to grid
     for (let row = 0; row < grid.length; row++) {
