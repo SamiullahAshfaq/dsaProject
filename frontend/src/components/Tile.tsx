@@ -1,3 +1,4 @@
+// Fixed Tile Component with better logic and debugging
 import { twMerge } from "tailwind-merge";
 import {
   END_TILE_STYLE,
@@ -36,33 +37,48 @@ export function Tile({
   handleMouseUp: MouseFunction;
   handleMouseEnter: MouseFunction;
 }) {
-  let tileTyleStyle;
-
+  // Fixed logic: Start and End tiles should NEVER be walls during maze generation
+  let tileStyle;
+  
   if (isStart) {
-    tileTyleStyle = START_TILE_STYLE;
+    tileStyle = START_TILE_STYLE;
   } else if (isEnd) {
-    tileTyleStyle = END_TILE_STYLE;
-  } else if (isWall) {
-    tileTyleStyle = WALL_TILE_STYLE;
+    tileStyle = END_TILE_STYLE;
   } else if (isPath) {
-    tileTyleStyle = PATH_TILE_STYLE;
+    // Path has higher priority than traversed
+    tileStyle = PATH_TILE_STYLE;
   } else if (isTraversed) {
-    tileTyleStyle = TRAVERSED_TILE_STYLE;
+    tileStyle = TRAVERSED_TILE_STYLE;
+  } else if (isWall) {
+    tileStyle = WALL_TILE_STYLE;
   } else {
-    tileTyleStyle = TILE_STYLE;
+    tileStyle = TILE_STYLE;
   }
 
-  const borderStyle =
-    row === MAX_ROWS - 1 ? "border-b" : col === 0 ? "border-l" : "";
-  const edgeStyle = row === MAX_ROWS - 1 && col === 0 ? "border-l" : "";
+  // Fixed border logic
+  const borderClasses = [];
+  if (row === MAX_ROWS - 1) {
+    borderClasses.push("border-b");
+  }
+  if (col === 0) {
+    borderClasses.push("border-l");
+  }
+  
+  const borderStyle = borderClasses.join(" ");
 
   return (
     <div
-      className={twMerge(tileTyleStyle, borderStyle, edgeStyle)}
+      className={twMerge(tileStyle, borderStyle)}
       id={`${row}-${col}`}
       onMouseDown={() => handleMouseDown(row, col)}
       onMouseUp={() => handleMouseUp(row, col)}
       onMouseEnter={() => handleMouseEnter(row, col)}
+      // Add data attributes for debugging
+      data-row={row}
+      data-col={col}
+      data-is-start={isStart}
+      data-is-end={isEnd}
+      data-is-wall={isWall}
     />
   );
 }

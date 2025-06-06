@@ -1,3 +1,4 @@
+// Fixed Controller with proper CORS and error handling
 package com.example.pathfinder.controller;
 
 import com.example.pathfinder.model.GridResponse;
@@ -8,10 +9,10 @@ import com.example.pathfinder.service.MazeService.MazeGenerationResult;
 import com.example.pathfinder.service.PathfindingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-
 
 @RestController
 @RequestMapping("/api")
@@ -58,9 +59,9 @@ public class PathFinderController {
         };
     }
 
-    // Maze Generation Unified Endpoint
+    // Maze Generation Unified Endpoint with better error handling
     @PostMapping("/maze/{mazeType}")
-    public MazeGenerationResult generateMaze(
+    public ResponseEntity<?> generateMaze(
         @PathVariable String mazeType,
         @RequestParam int rows,
         @RequestParam int cols,
@@ -69,18 +70,45 @@ public class PathFinderController {
         @RequestParam int endRow,
         @RequestParam int endCol
     ) {
-        logger.info("Maze generation request: type={}, rows={}, cols={}, start=({}, {}), end=({}, {})",
-                mazeType, rows, cols, startRow, startCol, endRow, endCol);
+        try {
+            logger.info("Maze generation request: type={}, rows={}, cols={}, start=({}, {}), end=({}, {})",
+                    mazeType, rows, cols, startRow, startCol, endRow, endCol);
 
-        Position start = new Position(startRow, startCol);
-        Position end = new Position(endRow, endCol);
-        
-        if ("BINARY_TREE".equals(mazeType)) {
-            return mazeService.generateBinaryTreeMaze(rows, cols, start, end);
-        } else if ("RECURSIVE_DIVISION".equals(mazeType)) {
-            return mazeService.generateRecursiveDivisionMaze(rows, cols, start, end);
-        } else {
-            throw new IllegalArgumentException("Invalid maze type: " + mazeType);
+            // Validate parameters
+            if (rows <= 0 || cols <= 0) {
+                return ResponseEntity.badRequest().body("Rows and columns must be greater than 0");
+            }
+            
+            if (startRow < 0 || startRow >= rows || startCol < 0 || startCol >= cols) {
+                return ResponseEntity.badRequest().body("Start coordinates out of bounds");
+            }
+            
+            if (endRow < 0 || endRow >= rows || endCol < 0 || endCol >= cols) {
+                return ResponseEntity.badRequest().body("End coordinates out of bounds");
+            }
+
+            Position start = new Position(startRow, startCol);
+            Position end = new Position(endRow, endCol);
+            
+            MazeGenerationResult result;
+            
+            if ("BINARY_TREE".equals(mazeType)) {
+                result = mazeService.generateBinaryTreeMaze(rows, cols, start, end);
+            } else if ("RECURSIVE_DIVISION".equals(mazeType)) {
+                result = mazeService.generateRecursiveDivisionMaze(rows, cols, start, end);
+            } else {
+                return ResponseEntity.badRequest().body("Invalid maze type: " + mazeType);
+            }
+            
+            logger.info("Maze generation completed successfully. Steps: {}", 
+                       result.getAnimationSteps().size());
+            
+            return ResponseEntity.ok(result);
+            
+        } catch (Exception e) {
+            logger.error("Error generating maze", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                                .body("Error generating maze: " + e.getMessage());
         }
     }
 
