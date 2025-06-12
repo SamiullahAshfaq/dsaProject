@@ -124,17 +124,6 @@ public class PathFinderController {
         }
     }
 
-    // Helper: Grid Creation
-    private Tile[][] createGrid(int rows, int cols) {
-        Tile[][] grid = new Tile[rows][cols];
-        for (int y = 0; y < rows; y++) {
-            for (int x = 0; x < cols; x++) {
-                grid[y][x] = new Tile(y, x);
-            }
-        }
-        return grid;
-    }
-
     // Helper: Validate Grid Inputs
     private void validateGridParameters(int rows, int cols, int startX, int startY, int endX, int endY) {
         if (rows <= 0 || cols <= 0) {

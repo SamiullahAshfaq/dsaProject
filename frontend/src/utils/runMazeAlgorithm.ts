@@ -128,11 +128,12 @@ const animateBinaryTreeGeneration = async (
           element.classList.add("border-l");
         }
       }
+      await sleep(5 * SPEEDS.find((s) => s.value === speed)!.value);
     }
   }
   
-  await sleep(MAX_ROWS * MAX_COLS);
-  
+  await sleep(50 * SPEEDS.find((s) => s.value === speed)!.value);
+
   // Then animate passage carving (similar to destroyWall function)
   const passageSteps = steps.filter(step => step.stepType === 'passage');
   for (const step of passageSteps) {
