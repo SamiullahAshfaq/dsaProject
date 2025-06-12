@@ -17,7 +17,8 @@ import org.slf4j.LoggerFactory;
 @RestController
 @RequestMapping("/api")
 public class PathFinderController {
-
+    
+    private Tile[][] latestMazeGrid; // Store last generated maze
     private static final Logger logger = LoggerFactory.getLogger(PathFinderController.class);
 
     @Autowired
@@ -27,7 +28,7 @@ public class PathFinderController {
     private MazeService mazeService;
 
     // Pathfinding Algorithm Endpoint
-    @PostMapping("/pathfinding")
+    @GetMapping("/pathfinding")
     public GridResponse getPath(@RequestParam String algorithm,
                                 @RequestParam int rows,
                                 @RequestParam int cols,
@@ -40,9 +41,14 @@ public class PathFinderController {
                 algorithm, rows, cols, startX, startY, endX, endY);
 
         validateGridParameters(rows, cols, startX, startY, endX, endY);
-        Tile[][] grid = createGrid(rows, cols);
+        if (latestMazeGrid == null) {
+            throw new IllegalStateException("No maze has been generated yet.");
+        }
+        Tile[][] grid = deepCopyGrid(latestMazeGrid);
         Tile start = grid[startY][startX];
         Tile end = grid[endY][endX];
+        start.setWall(false);
+        end.setWall(false);
 
         Algorithm algo;
         try {
@@ -56,8 +62,8 @@ public class PathFinderController {
             case A_STAR -> pathfindingService.runAStar(grid, start, end);
             case BFS -> pathfindingService.runBFS(grid, start, end);
             case DFS -> pathfindingService.runDFS(grid, start, end);
-        };
-    }
+    };
+}
 
     // Maze Generation Unified Endpoint with better error handling
     @PostMapping("/maze/{mazeType}")
@@ -95,8 +101,12 @@ public class PathFinderController {
             if (null == mazeType) {
                 return ResponseEntity.badRequest().body("Invalid maze type: " + mazeType);
             } else switch (mazeType) {
-                case "BINARY_TREE" -> result = mazeService.generateBinaryTreeMaze(rows, cols, start, end);
-                case "RECURSIVE_DIVISION" -> result = mazeService.generateRecursiveDivisionMaze(rows, cols, start, end);
+                case "BINARY_TREE" ->{ result = mazeService.generateBinaryTreeMaze(rows, cols, start, end);
+                                      latestMazeGrid = result.getFinalMaze(); // Store the latest maze grid
+                                    }
+                case "RECURSIVE_DIVISION" ->{ result = mazeService.generateRecursiveDivisionMaze(rows, cols, start, end);
+                                      latestMazeGrid = result.getFinalMaze(); // Store the latest maze grid
+                                    }
                 default -> {
                     return ResponseEntity.badRequest().body("Invalid maze type: " + mazeType);
                 }
@@ -119,7 +129,7 @@ public class PathFinderController {
         Tile[][] grid = new Tile[rows][cols];
         for (int y = 0; y < rows; y++) {
             for (int x = 0; x < cols; x++) {
-                grid[y][x] = new Tile();
+                grid[y][x] = new Tile(y, x);
             }
         }
         return grid;
@@ -137,4 +147,25 @@ public class PathFinderController {
             throw new IllegalArgumentException("End coordinates out of bounds.");
         }
     }
+
+    // Add row and col properties to copied tiles
+private Tile[][] deepCopyGrid(Tile[][] original) {
+    int rows = original.length;
+    int cols = original[0].length;
+    Tile[][] copy = new Tile[rows][cols];
+    for (int i = 0; i < rows; i++) {
+        for (int j = 0; j < cols; j++) {
+            Tile orig = original[i][j];
+            Tile t = new Tile(i, j); // Set correct row/col
+            t.setWall(orig.isWall);
+            // Initialize pathfinding properties
+            t.distance = Integer.MAX_VALUE;
+            t.isTraversed = false;
+            t.parent = null;
+            copy[i][j] = t;
+        }
+    }
+    return copy;
+}
+
 }

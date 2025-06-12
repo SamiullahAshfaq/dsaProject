@@ -11,6 +11,7 @@ public class PathfindingService {
 
     // Dijkstra Algorithm
     public GridResponse runDijkstra(Tile[][] grid, Tile start, Tile end) {
+        initializeTiles(grid);
         List<Tile> traversedTiles = new ArrayList<>();
         PriorityQueue<Tile> untraversedTiles = new PriorityQueue<>(Comparator.comparingInt(t -> t.distance));
         start.distance = 0;
@@ -41,6 +42,7 @@ public class PathfindingService {
 
     // A* Algorithm
     public GridResponse runAStar(Tile[][] grid, Tile start, Tile end) {
+        initializeTiles(grid);
         List<Tile> traversedTiles = new ArrayList<>();
         Map<Tile, Integer> heuristicCost = initHeuristicCost(grid, end);
         Map<Tile, Integer> functionCost = new HashMap<>();
@@ -76,6 +78,7 @@ public class PathfindingService {
 
     // BFS Algorithm
     public GridResponse runBFS(Tile[][] grid, Tile start, Tile end) {
+        initializeTiles(grid);
         List<Tile> traversedTiles = new ArrayList<>();
         Queue<Tile> unTraversed = new LinkedList<>();
         start.distance = 0;
@@ -91,12 +94,12 @@ public class PathfindingService {
             if (tile.equals(end)) break;
 
             for (Tile neighbor : getUntraversedNeighbors(grid, tile)) {
-                if (!unTraversed.contains(neighbor)) {
+                if (neighbor.distance == Integer.MAX_VALUE) {  // Only add unvisited neighbors
                     neighbor.distance = tile.distance + 1;
                     neighbor.parent = tile;
                     unTraversed.add(neighbor);
-                }
-            }
+    }
+}
         }
 
         List<Tile> path = backtrackPath(end);
@@ -105,6 +108,7 @@ public class PathfindingService {
 
     // DFS Algorithm
     public GridResponse runDFS(Tile[][] grid, Tile start, Tile end) {
+        initializeTiles(grid);
         List<Tile> traversedTiles = new ArrayList<>();
         Stack<Tile> unTraversed = new Stack<>();
         start.distance = 0;
@@ -157,6 +161,17 @@ public class PathfindingService {
         }
         return heuristicCost;
     }
+
+    // Add this at the start of each pathfinding algorithm
+    private void initializeTiles(Tile[][] grid) {
+        for (Tile[] row : grid) {
+            for (Tile tile : row) {
+                tile.distance = Integer.MAX_VALUE;
+                tile.isTraversed = false;
+                tile.parent = null;
+        }
+    }
+}
 
     private List<Tile> backtrackPath(Tile endTile) {
         List<Tile> path = new ArrayList<>();

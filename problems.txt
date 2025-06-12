@@ -1,0 +1,5 @@
+1. starting and ending point for the algorithm
+2. binarytree animation
+3. invalid maze generation in recursion
+4. not have option of running different algorithm on same maze
+5. 

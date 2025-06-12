@@ -16,6 +16,17 @@ public class Tile {
         this.col = col;
     }
 
+    public Tile(Tile other) {
+    this.row = other.row;
+    this.col = other.col;
+    this.isWall = other.isWall;
+    this.isPath = other.isPath;
+    this.isTraversed = other.isTraversed;
+    this.distance = other.distance;
+    this.parent = other.parent; // optional: you may skip parent if unused in copy
+}
+
+
     public boolean isWall() {
         return isWall;
     }

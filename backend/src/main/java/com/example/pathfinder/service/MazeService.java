@@ -105,8 +105,8 @@ public class MazeService {
         }
 
         // Recursively divide above and below
-        divide(grid, row, col, (makeWallAt - row + 1) / 2, width, start, end, steps);
-        divide(grid, makeWallAt + 1, col, height - (makeWallAt - row + 1) / 2, width, start, end, steps);
+        divide(grid, row, col, makeWallAt - row, width, start, end, steps);  // Above
+        divide(grid, makeWallAt + 1, col, height - (makeWallAt - row + 1), width, start, end, steps);  // Below
 
     } else {
         // Vertical division

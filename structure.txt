@@ -1,0 +1,122 @@
+.
+├── backend
+│   ├── pom.xml
+│   ├── src
+│   │   ├── main
+│   │   │   └── java
+│   │   │       └── com
+│   │   │           └── example
+│   │   │               └── pathfinder
+│   │   │                   ├── CorsConfig.java
+│   │   │                   ├── PathFindingApplication.java
+│   │   │                   ├── controller
+│   │   │                   │   ├── Algorithm.java
+│   │   │                   │   ├── MazeType.java
+│   │   │                   │   └── PathFinderController.java
+│   │   │                   ├── exception
+│   │   │                   │   └── GlobalExceptionHandler.java
+│   │   │                   ├── model
+│   │   │                   │   ├── GridRequest.java
+│   │   │                   │   ├── GridResponse.java
+│   │   │                   │   ├── MazeRequest.java
+│   │   │                   │   ├── PathfindingRequest.java
+│   │   │                   │   ├── Position.java
+│   │   │                   │   └── Tile.java
+│   │   │                   └── service
+│   │   │                       ├── MazeService.java
+│   │   │                       └── PathfindingService.java
+│   │   └── test
+│   │       └── java
+│   └── target
+│       ├── classes
+│       │   └── com
+│       │       └── example
+│       │           └── pathfinder
+│       │               ├── CorsConfig$1.class
+│       │               ├── CorsConfig.class
+│       │               ├── PathFindingApplication.class
+│       │               ├── controller
+│       │               │   ├── Algorithm.class
+│       │               │   ├── MazeType.class
+│       │               │   ├── PathFinderController$1.class
+│       │               │   └── PathFinderController.class
+│       │               ├── exception
+│       │               │   └── GlobalExceptionHandler.class
+│       │               ├── model
+│       │               │   ├── GridRequest.class
+│       │               │   ├── GridResponse.class
+│       │               │   ├── MazeRequest.class
+│       │               │   ├── PathfindingRequest.class
+│       │               │   ├── Position.class
+│       │               │   └── Tile.class
+│       │               └── service
+│       │                   ├── MazeService$MazeGenerationResult.class
+│       │                   ├── MazeService$MazeStep.class
+│       │                   ├── MazeService.class
+│       │                   └── PathfindingService.class
+│       ├── generated-sources
+│       │   └── annotations
+│       ├── generated-test-sources
+│       │   └── test-annotations
+│       ├── maven-status
+│       │   └── maven-compiler-plugin
+│       │       ├── compile
+│       │       │   └── default-compile
+│       │       │       ├── createdFiles.lst
+│       │       │       └── inputFiles.lst
+│       │       └── testCompile
+│       │           └── default-testCompile
+│       │               ├── createdFiles.lst
+│       │               └── inputFiles.lst
+│       └── test-classes
+├── frontend
+│   ├── LICENSE
+│   ├── README.md
+│   ├── index.html
+│   ├── package-lock.json
+│   ├── package.json
+│   ├── postcss.config.js
+│   ├── public
+│   │   ├── favicon-16x16.png
+│   │   └── vite.svg
+│   ├── src
+│   │   ├── App.tsx
+│   │   ├── assets
+│   │   │   ├── pathfinding-visualizer.gif
+│   │   │   └── react.svg
+│   │   ├── components
+│   │   │   ├── Grid.tsx
+│   │   │   ├── Nav.tsx
+│   │   │   ├── PlayButton.tsx
+│   │   │   ├── Select.tsx
+│   │   │   └── Tile.tsx
+│   │   ├── context
+│   │   │   ├── PathfindingContext.tsx
+│   │   │   ├── SpeedContext.tsx
+│   │   │   └── TileContext.tsx
+│   │   ├── hooks
+│   │   │   ├── usePathfinding.tsx
+│   │   │   ├── useSpeed.tsx
+│   │   │   └── useTile.tsx
+│   │   ├── index.css
+│   │   ├── main.tsx
+│   │   ├── utils
+│   │   │   ├── animatePath.ts
+│   │   │   ├── constants.ts
+│   │   │   ├── constructBorder.ts
+│   │   │   ├── createWall.ts
+│   │   │   ├── destroyWall.ts
+│   │   │   ├── getUntraversedNeighbors.ts
+│   │   │   ├── helpers.ts
+│   │   │   ├── heuristics.ts
+│   │   │   ├── isInQueue.ts
+│   │   │   ├── resetGrid.ts
+│   │   │   ├── runMazeAlgorithm.ts
+│   │   │   ├── runPathfindingAlgorithm.ts
+│   │   │   └── types.ts
+│   │   └── vite-env.d.ts
+│   ├── tailwind.config.js
+│   ├── tsconfig.json
+│   ├── tsconfig.node.json
+│   └── vite.config.ts
+└── structure.txt
