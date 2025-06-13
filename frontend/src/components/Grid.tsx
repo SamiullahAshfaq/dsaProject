@@ -15,27 +15,27 @@ export function Grid({
   useTile();
   const [isMouseDown, setIsMouseDown] = useState(false);
 
-  const handleMouseDown = (row: number, col: number) => {
-    if (isVisualizationRunningRef.current || checkIfStartOrEnd(row, col)) return;
+  // const handleMouseDown = (row: number, col: number) => {
+  //   if (isVisualizationRunningRef.current || checkIfStartOrEnd(row, col)) return;
 
-    setIsMouseDown(true);
-    const newGrid = createNewGrid(grid, row, col);
-    setGrid(newGrid);
-  };
+  //   setIsMouseDown(true);
+  //   const newGrid = createNewGrid(grid, row, col);
+  //   setGrid(newGrid);
+  // };
 
-  const handleMouseUp = () => {
-    if (isVisualizationRunningRef.current) return;
-    setIsMouseDown(false);
-  };
+  // const handleMouseUp = () => {
+  //   if (isVisualizationRunningRef.current) return;
+  //   setIsMouseDown(false);
+  // };
 
-  const handleMouseEnter = (row: number, col: number) => {
-    if (isVisualizationRunningRef.current || checkIfStartOrEnd(row, col)) return;
+  // const handleMouseEnter = (row: number, col: number) => {
+  //   if (isVisualizationRunningRef.current || checkIfStartOrEnd(row, col)) return;
 
-    if (isMouseDown) {
-      const newGrid = createNewGrid(grid, row, col);
-      setGrid(newGrid);
-    }
-  };
+  //   if (isMouseDown) {
+  //     const newGrid = createNewGrid(grid, row, col);
+  //     setGrid(newGrid);
+  //   }
+  // };
 
   return (
       <div
@@ -57,9 +57,9 @@ export function Grid({
                       isPath={tile.isPath}
                       isTraversed={tile.isTraversed}
                       isWall={tile.isWall}
-                      handleMouseDown={() => handleMouseDown(tile.row, tile.col)}
-                      handleMouseUp={handleMouseUp}
-                      handleMouseEnter={() => handleMouseEnter(tile.row, tile.col)}
+                      // handleMouseDown={() => handleMouseDown(tile.row, tile.col)}
+                      // handleMouseUp={handleMouseUp}
+                      // handleMouseEnter={() => handleMouseEnter(tile.row, tile.col)}
                   />
               ))}
             </div>

@@ -10,9 +10,9 @@ import {
   WALL_TILE_STYLE,
 } from "../utils/constants";
 
-interface MouseFunction {
-  (row: number, col: number): void;
-}
+// interface MouseFunction {
+//   (row: number, col: number): void;
+// }
 
 export function Tile({
   row,
@@ -22,9 +22,9 @@ export function Tile({
   isTraversed,
   isWall,
   isPath,
-  handleMouseDown,
-  handleMouseUp,
-  handleMouseEnter,
+  // handleMouseDown,
+  // handleMouseUp,
+  // handleMouseEnter,
 }: {
   row: number;
   col: number;
@@ -33,9 +33,9 @@ export function Tile({
   isTraversed: boolean;
   isWall: boolean;
   isPath: boolean;
-  handleMouseDown: MouseFunction;
-  handleMouseUp: MouseFunction;
-  handleMouseEnter: MouseFunction;
+  // handleMouseDown: MouseFunction;
+  // handleMouseUp: MouseFunction;
+  // handleMouseEnter: MouseFunction;
 }) {
   // Fixed logic: Start and End tiles should NEVER be walls during maze generation
   let tileStyle;
@@ -70,9 +70,9 @@ export function Tile({
     <div
       className={twMerge(tileStyle, borderStyle)}
       id={`${row}-${col}`}
-      onMouseDown={() => handleMouseDown(row, col)}
-      onMouseUp={() => handleMouseUp(row, col)}
-      onMouseEnter={() => handleMouseEnter(row, col)}
+      // onMouseDown={() => handleMouseDown(row, col)}
+      // onMouseUp={() => handleMouseUp(row, col)}
+      // onMouseEnter={() => handleMouseEnter(row, col)}
       // Add data attributes for debugging
       data-row={row}
       data-col={col}
