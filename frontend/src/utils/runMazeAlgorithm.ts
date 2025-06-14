@@ -1,6 +1,6 @@
 import {GridType, MazeType, SpeedType, TileType} from "./types";
 import { sleep } from "./helpers";
-import { MAX_COLS, MAX_ROWS, SPEEDS, WALL_TILE_STYLE, TILE_STYLE, START_TILE_STYLE, END_TILE_STYLE } from "./constants";
+import { MAX_ROWS, SPEEDS, WALL_TILE_STYLE, TILE_STYLE, START_TILE_STYLE, END_TILE_STYLE } from "./constants";
 
 // Interface for backend animation steps
 interface MazeStep {
@@ -32,74 +32,6 @@ const getTileStyle = (tile: TileType, startTile: TileType, endTile: TileType): s
 const isStartOrEndTile = (row: number, col: number, startTile: TileType, endTile: TileType): boolean => {
   return (row === startTile.row && col === startTile.col) || 
          (row === endTile.row && col === endTile.col);
-};
-
-// Animate border construction for recursive division
-const animateBorderConstruction = async (
-  grid: GridType,
-  steps: MazeStep[],
-  startTile: TileType,
-  endTile: TileType,
-  speed: SpeedType
-): Promise<void> => {
-  const borderSteps = steps.filter(step => step.stepType === 'border');
-  
-  for (const step of borderSteps) {
-    if (!isStartOrEndTile(step.row, step.col, startTile, endTile)) {
-      grid[step.row][step.col].isWall = step.isWall;
-      
-      const element = document.getElementById(`${step.row}-${step.col}`);
-      if (element) {
-        element.className = step.isWall ? 
-          `${WALL_TILE_STYLE} animate-wall` : 
-          getTileStyle(grid[step.row][step.col], startTile, endTile);
-          
-        // Add border classes for grid appearance
-        if (step.row === MAX_ROWS - 1) {
-          element.classList.add("border-b");
-        }
-        if (step.col === 0) {
-          element.classList.add("border-l");
-        }
-      }
-      
-      await sleep(5 * SPEEDS.find((s) => s.value === speed)!.value);
-    }
-  }
-};
-
-// Animate recursive division walls
-const animateRecursiveDivisionWalls = async (
-  grid: GridType,
-  steps: MazeStep[],
-  startTile: TileType,
-  endTile: TileType,
-  speed: SpeedType
-): Promise<void> => {
-  const wallSteps = steps.filter(step => step.stepType === 'wall');
-  
-  for (const step of wallSteps) {
-    if (!isStartOrEndTile(step.row, step.col, startTile, endTile)) {
-      grid[step.row][step.col].isWall = step.isWall;
-      
-      const element = document.getElementById(`${step.row}-${step.col}`);
-      if (element) {
-        element.className = step.isWall ? 
-          `${WALL_TILE_STYLE} animate-wall` : 
-          getTileStyle(grid[step.row][step.col], startTile, endTile);
-          
-        // Add border classes for grid appearance
-        if (step.row === MAX_ROWS - 1) {
-          element.classList.add("border-b");
-        }
-        if (step.col === 0) {
-          element.classList.add("border-l");
-        }
-      }
-      
-      await sleep(10 * SPEEDS.find((s) => s.value === speed)!.value - 5);
-    }
-  }
 };
 
 // Animate binary tree maze generation
@@ -169,11 +101,6 @@ const animateMazeGeneration = async (
 ): Promise<void> => {
   if (maze === "BINARY_TREE") {
     await animateBinaryTreeGeneration(grid, result.animationSteps, startTile, endTile, speed);
-  } else if (maze === "RECURSIVE_DIVISION") {
-    // First animate border construction
-    await animateBorderConstruction(grid, result.animationSteps, startTile, endTile, speed);
-    // Then animate wall creation
-    await animateRecursiveDivisionWalls(grid, result.animationSteps, startTile, endTile, speed);
   } else {
     // For other maze types, use generic step-by-step animation
     for (const step of result.animationSteps) {

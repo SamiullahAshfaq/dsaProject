@@ -1,41 +1,16 @@
 import { twMerge } from "tailwind-merge";
-import { MutableRefObject, useState } from "react";
+import { MutableRefObject} from "react";
 import { usePathfinding } from "../hooks/usePathfinding";
 import { useTile } from "../hooks/useTile";
 import { MAX_COLS, MAX_ROWS } from "../utils/constants";
 import { Tile } from "./Tile";
-import { checkIfStartOrEnd, createNewGrid } from "../utils/helpers";
 
-export function Grid({
-                       isVisualizationRunningRef,
-                     }: {
+export function Grid({}: {
   isVisualizationRunningRef: MutableRefObject<boolean>;
 }) {
-  const { grid, setGrid } = usePathfinding();
+  const { grid } = usePathfinding();
   useTile();
-  const [isMouseDown, setIsMouseDown] = useState(false);
 
-  // const handleMouseDown = (row: number, col: number) => {
-  //   if (isVisualizationRunningRef.current || checkIfStartOrEnd(row, col)) return;
-
-  //   setIsMouseDown(true);
-  //   const newGrid = createNewGrid(grid, row, col);
-  //   setGrid(newGrid);
-  // };
-
-  // const handleMouseUp = () => {
-  //   if (isVisualizationRunningRef.current) return;
-  //   setIsMouseDown(false);
-  // };
-
-  // const handleMouseEnter = (row: number, col: number) => {
-  //   if (isVisualizationRunningRef.current || checkIfStartOrEnd(row, col)) return;
-
-  //   if (isMouseDown) {
-  //     const newGrid = createNewGrid(grid, row, col);
-  //     setGrid(newGrid);
-  //   }
-  // };
 
   return (
       <div
@@ -57,9 +32,6 @@ export function Grid({
                       isPath={tile.isPath}
                       isTraversed={tile.isTraversed}
                       isWall={tile.isWall}
-                      // handleMouseDown={() => handleMouseDown(tile.row, tile.col)}
-                      // handleMouseUp={handleMouseUp}
-                      // handleMouseEnter={() => handleMouseEnter(tile.row, tile.col)}
                   />
               ))}
             </div>

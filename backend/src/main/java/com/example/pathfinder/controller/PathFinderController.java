@@ -104,9 +104,6 @@ public class PathFinderController {
                 case "BINARY_TREE" ->{ result = mazeService.generateBinaryTreeMaze(rows, cols, start, end);
                                       latestMazeGrid = result.getFinalMaze(); // Store the latest maze grid
                                     }
-                case "RECURSIVE_DIVISION" ->{ result = mazeService.generateRecursiveDivisionMaze(rows, cols, start, end);
-                                      latestMazeGrid = result.getFinalMaze(); // Store the latest maze grid
-                                    }
                 default -> {
                     return ResponseEntity.badRequest().body("Invalid maze type: " + mazeType);
                 }
